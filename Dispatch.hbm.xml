@@ -1,0 +1,1825 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="com.sunrise.jop.business.handlingOfficial.dispatch.persistent.DispatchVO" table="T_DISPATCH">
+<id column="DISPATCH_ID" name="dispatchId" type="java.lang.Long">
+<generator class="assigned"/>
+</id>
+<property column="BUSI_PROCESS_ID" length="22" name="busiProcessId" type="java.lang.Long"/>
+<property column="SEAL_ID" length="22" name="sealId" type="java.lang.Long"/>
+<property column="DIS_SERIAL_ID" length="64" name="disSerialId" type="java.lang.String"/>
+<property column="BUSI_CODE" length="3" name="busiCode" type="java.lang.String"/>
+<property column="PAPER_TITLE" length="1024" name="paperTitle" type="java.lang.String"/>
+<property column="SIGN_PERSON" length="32" name="signPerson" type="java.lang.String"/>
+<property column="COUNTER_SIGN" length="128" name="counterSign" type="java.lang.String"/>
+<property column="PAPER_CODE" length="64" name="paperCode" type="java.lang.String"/>
+<property column="MAIN_OFFICE" length="256" name="mainOffice" type="java.lang.String"/>
+<property column="COPY_OFFICE" length="1024" name="copyOffice" type="java.lang.String"/>
+<property column="SUBJECT_WORD" length="128" name="subjectWord" type="java.lang.String"/>
+<property column="DRAFT_PERSON" length="32" name="draftPerson" type="java.lang.String"/>
+<property column="DRAFT_DATE" length="7" name="draftDate" type="java.util.Date"/>
+<property column="DRAFT_DEPT" length="32" name="draftDept" type="java.lang.String"/>
+<property column="LINK_TEL" length="64" name="linkTel" type="java.lang.String"/>
+<property column="URGENCY_LEVEL" length="3" name="urgencyLevel" type="java.lang.String"/>
+<property column="PRIVATE_LEVE" length="3" name="privateLeve" type="java.lang.String"/>
+<property column="PRINT_PERSON" length="32" name="printPerson" type="java.lang.String"/>
+<property column="PROOF_PERSON" length="32" name="proofPerson" type="java.lang.String"/>
+<property column="PRINT_NUM" length="22" name="printNum" type="java.lang.Long"/>
+<property column="DF_STATE" length="3" name="dfState" type="java.lang.String"/>
+<property column="CUR_HANDLER" length="1024" name="curHandler" type="java.lang.String"/>
+<property column="CUR_DEPARTMENT" length="32" name="curDepartment" type="java.lang.String"/>
+<property column="CUR_BEGIN_TIME" length="7" name="curBeginTime" type="java.util.Date"/>
+<property column="TASK_NAME" length="64" name="taskName" type="java.lang.String"/>
+<property column="DRAFT_IDEA" length="256" name="draftIdea" type="java.lang.String"/>
+<property column="PROCESS_ID" length="22" name="processId" type="java.lang.Long"/>
+<property column="HANDLE_TIMELIMIT" length="22" name="handleTimelimit" type="java.lang.Long"/>
+<property column="PUBLIC_WAY" name="publicWay" length="3" type="java.lang.String"/>
+<property column="NOTPUBLIC_CAUSE" name= "notpublicCause" length="128" type="java.lang.String"/>
+<property column="SIGN_DATE" length="7" name="signDate" type="java.util.Date"/>
+<property column="NUM_ID" length="22" name="numId" type="java.lang.Long"/>
+<property column="IS_ARCHIVED" length="1" name="isArchived" type="java.lang.String"/>
+<property column="DOCUMENT_ID" length="22" name="documentId" type="java.lang.Long"/>
+<property column="DISPATCH_SCOPE" length="128" name="dispatchScope" type="java.lang.String"/>
+<property column="REMARKS" length="1024" name="remarks" type="java.lang.String"/>
+<property column="RELATION_ID" length="50" name="relationId" type="java.lang.String"/>
+<property column="RELATION_TYPE" length="10" name="relationType" type="java.lang.String"/>
+<property column="RELATION_NAME" length="100" name="relationName" type="java.lang.String"/>
+</class>
+ 
+ <sql-query name="workflow.param.doQueryDispatchs"> 
+	select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.seal_id as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       t.draft_dept as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       t.handle_timelimit as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks
+  from T_DISPATCH t where t.df_state in (:state) and t.process_id = :pronessid
+	</sql-query>
+	
+	<!-- 20190730 在原基础上添加按处室排序
+<sql-query name="workflow.param.doQueryUndisposeDispatchReceived">  
+   (select tt.TASK_INSTANCE_ID as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       tt.CUR_NODE_ID as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       org.ORG_NAME as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       tt.TASK_HANDLER as proofPerson,
+       t.dispatch_id as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       tt.CREATE_TIME as curBeginTime,
+       tt.task_name as taskName,
+       tt.source_operator as draftIdea,
+       t.process_id as processId,
+       t.dispatch_id as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks 
+       from T_DISPATCH t,T_PROCESS_INSTANCE_REC tt,SYS_ORG org
+       where t.DF_STATE in (1,2) and t.DISPATCH_ID =tt.BUSI_SERIAL_NO and tt.END_TIME is null and tt.TASK_HANDLER = :taskHandler
+       and t.DRAFT_DEPT=org.ORG_CODE and tt.BUSI_CODE='DF' and  tt.app_state !='1'
+       order by org.ORG_CODE )
+  union all
+     (select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.seal_id as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       org.ORG_NAME as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.dispatch_id as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       '拟稿' as taskName,
+       t.draft_person as draftIdea,
+       t.process_id as processId,
+       t.dispatch_id as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks
+       from T_DISPATCH t, SYS_ORG org
+       where t.DRAFT_DEPT=org.ORG_CODE
+       and t.DF_STATE=0 and t.BUSI_CODE ='DF' and t.DRAFT_PERSON = :taskHandler
+       order by org.ORG_NAME)
+union all    
+    (select t.RECEIVED_ID as dispatchId,
+       t.BUSI_PROCESS_ID as busiProcessId,
+       t.REC_SERIAL_ID as disSerialId,
+       t.BUSI_PROCESS_ID as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.paper_title as signPerson,
+       t.paper_title as counterSign,
+       t.paper_code as paperCode,
+       t.paper_title as mainOffice,
+       t.paper_title as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.REC_DATE as draftDate,
+       t.draft_dept as draftDept,
+       t.paper_title as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.paper_title as printPerson,
+       t.paper_title as proofPerson,
+       t.RECEIVED_ID as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_person as draftIdea,
+       t.process_id as processId,
+       t.process_id as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.REC_DATE as signDate,
+       t.RECEIVED_ID as numId,
+       t.private_leve as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.REC_TYPE as dispatchScope,
+       t.REMARKS as relationId,
+       t.REMARKS as relationType,
+       t.REMARKS as relationName,
+       t.REMARKS as remarks
+       from T_RECEIVED t where t.DF_STATE=0 and t.DRAFT_PERSON = :taskHandler
+       )
+union all 
+  (select tt.TASK_INSTANCE_ID as dispatchId,
+       t.BUSI_PROCESS_ID as busiProcessId,
+       t.REC_SERIAL_ID as disSerialId,
+       t.BUSI_PROCESS_ID as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.paper_title as signPerson,
+       t.paper_title as counterSign,
+       t.paper_code as paperCode,
+       t.paper_title as mainOffice,
+       t.paper_title as copyOffice,
+       t.subject_Word as subjectWord,
+       t.draft_person as draftPerson,
+       t.REC_DATE as draftDate,
+       t.draft_dept as draftDept,
+       t.paper_title as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.paper_title as printPerson,
+       t.paper_title as proofPerson,
+       t.RECEIVED_ID as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       tt.CREATE_TIME as curBeginTime,
+       tt.task_name as taskName,
+       tt.source_operator as draftIdea,
+       t.process_id as processId,
+       t.process_id as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.REC_DATE as signDate,
+       tt.CUR_NODE_ID  as numId,
+       t.private_leve as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.REC_TYPE as dispatchScope,
+       t.REMARKS as relationId,
+       t.REMARKS as relationType,
+       t.REMARKS as relationName,
+       t.REMARKS as remarks
+       from T_RECEIVED t,T_PROCESS_INSTANCE_REC tt 
+       where t.DF_STATE in (1,2)  and t.RECEIVED_ID=tt.BUSI_SERIAL_NO 
+       and tt.END_TIME is null and tt.BUSI_CODE ='RF' and tt.TASK_HANDLER  = :taskHandler  and  tt.app_state !='1'
+       )
+</sql-query>
+-->
+	
+	<!--待办收发文-->
+	<sql-query name="workflow.param.doQueryUndisposeDispatchReceived">  
+   select tt.TASK_INSTANCE_ID as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       tt.CUR_NODE_ID as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       org.ORG_NAME as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       tt.TASK_HANDLER as proofPerson,
+       t.dispatch_id as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       tt.CREATE_TIME as curBeginTime,
+       tt.task_name as taskName,
+       tt.source_operator as draftIdea,
+       t.process_id as processId,
+       t.dispatch_id as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks 
+       from T_DISPATCH t,T_PROCESS_INSTANCE_REC tt,SYS_ORG org
+       where t.DF_STATE in (1,2) and t.DISPATCH_ID =tt.BUSI_SERIAL_NO and tt.END_TIME is null and tt.TASK_HANDLER = :taskHandler
+       and t.DRAFT_DEPT=org.ORG_CODE and tt.BUSI_CODE='DF' and  tt.app_state !='1'
+  union all
+     select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.seal_id as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       org.ORG_NAME as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.dispatch_id as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       '拟稿' as taskName,
+       t.draft_person as draftIdea,
+       t.process_id as processId,
+       t.dispatch_id as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks
+       from T_DISPATCH t, SYS_ORG org
+       where t.DRAFT_DEPT=org.ORG_CODE
+       and t.DF_STATE=0 and t.BUSI_CODE ='DF' and t.DRAFT_PERSON = :taskHandler
+union all    
+    select t.RECEIVED_ID as dispatchId,
+       t.BUSI_PROCESS_ID as busiProcessId,
+       t.REC_SERIAL_ID as disSerialId,
+       t.BUSI_PROCESS_ID as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.paper_title as signPerson,
+       t.paper_title as counterSign,
+       t.paper_code as paperCode,
+       t.paper_title as mainOffice,
+       t.paper_title as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.REC_DATE as draftDate,
+<!--        t.draft_dept as draftDept, -->
+	   <!-- 20190805添加发文处室(收文)筛选功能,对应的处室名称,中文名称用到的是SYS_ORG表 -->
+       org.ORG_NAME as draftDept,
+       
+       t.paper_title as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.paper_title as printPerson,
+       t.paper_title as proofPerson,
+       t.RECEIVED_ID as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_person as draftIdea,
+       t.process_id as processId,
+       t.process_id as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.REC_DATE as signDate,
+       t.RECEIVED_ID as numId,
+       t.private_leve as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.REC_TYPE as dispatchScope,
+       t.REMARKS as relationId,
+       t.REMARKS as relationType,
+       t.REMARKS as relationName,
+       t.REMARKS as remarks
+<!--        from T_RECEIVED t where t.DF_STATE=0 and t.DRAFT_PERSON = :taskHandler -->
+       from T_RECEIVED t,SYS_ORG org where t.DRAFT_DEPT=org.ORG_CODE and t.DF_STATE=0 and t.DRAFT_PERSON = :taskHandler
+union all 
+  select tt.TASK_INSTANCE_ID as dispatchId,
+       t.BUSI_PROCESS_ID as busiProcessId,
+       t.REC_SERIAL_ID as disSerialId,
+       tt.CUR_NODE_ID as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.paper_title as signPerson,
+       t.paper_title as counterSign,
+       t.paper_code as paperCode,
+       t.paper_title as mainOffice,
+       t.paper_title as copyOffice,
+       t.subject_Word as subjectWord,
+       t.draft_person as draftPerson,
+       t.REC_DATE as draftDate,
+       <!-- 20190805 -->
+<!--        t.draft_dept as draftDept, -->
+       org.ORG_NAME as draftDept,
+   
+       t.paper_title as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.paper_title as printPerson,
+       t.paper_title as proofPerson,
+       t.RECEIVED_ID as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       tt.CREATE_TIME as curBeginTime,
+       tt.task_name as taskName,
+       tt.source_operator as draftIdea,
+       t.process_id as processId,
+       t.process_id as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.REC_DATE as signDate,
+       tt.CUR_NODE_ID  as numId,
+       t.private_leve as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.REC_TYPE as dispatchScope,
+       t.REMARKS as relationId,
+       t.REMARKS as relationType,
+       t.REMARKS as relationName,
+       t.REMARKS as remarks
+<!--        from T_RECEIVED t,T_PROCESS_INSTANCE_REC tt  -->
+       from T_RECEIVED t,T_PROCESS_INSTANCE_REC tt,SYS_ORG org
+       where t.DRAFT_DEPT=org.ORG_CODE and t.DF_STATE in (1,2)  and t.RECEIVED_ID=tt.BUSI_SERIAL_NO 
+       and tt.END_TIME is null and tt.BUSI_CODE ='RF' and tt.TASK_HANDLER  = :taskHandler  and  tt.app_state !='1'
+	</sql-query>
+	
+	
+	<sql-query name="workflow.param.doQueryUndisposeDispatchReceivedJJ">  
+	  select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       tt.CUR_NODE_ID as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       org.ORG_NAME as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       tt.TASK_HANDLER as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       tt.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       tt.TASK_INSTANCE_ID as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks  
+       from T_DISPATCH t,T_PROCESS_INSTANCE_REC tt,SYS_ORG org
+       where t.DF_STATE=1 and t.PROCESS_ID =tt.PROCESS_ID and tt.END_TIME is null and tt.TASK_HANDLER =:taskHandler
+       and t.DRAFT_DEPT=org.ORG_CODE and tt.BUSI_CODE='DF' and t.URGENCY_LEVEL in('0','1')  and  tt.app_state !='1'
+  union all
+     select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.seal_id as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       t.draft_dept as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       t.handle_timelimit as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks
+       from T_DISPATCH t where t.DF_STATE=0 and t.BUSI_CODE ='DF' and t.DRAFT_PERSON =:taskHandler  
+	   and t.URGENCY_LEVEL in('0','1')
+union all    
+    select t.RECEIVED_ID as dispatchId,
+       t.BUSI_PROCESS_ID as busiProcessId,
+       t.REC_SERIAL_ID as disSerialId,
+       t.BUSI_PROCESS_ID as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.paper_title as signPerson,
+       t.paper_title as counterSign,
+       t.paper_code as paperCode,
+       t.paper_title as mainOffice,
+       t.paper_title as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.REC_DATE as draftDate,
+       t.draft_dept as draftDept,
+       t.paper_title as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.paper_title as printPerson,
+       t.paper_title as proofPerson,
+       t.RECEIVED_ID as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       t.process_id as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.REC_DATE as signDate,
+       t.RECEIVED_ID as numId,
+       t.private_leve as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.REC_TYPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks
+       from T_RECEIVED t where t.DF_STATE=0 and t.DRAFT_PERSON =:taskHandler  
+	   and t.URGENCY_LEVEL in('0','1','2','3')
+union all 
+  select tt.TASK_INSTANCE_ID as dispatchId,
+       t.BUSI_PROCESS_ID as busiProcessId,
+       t.REC_SERIAL_ID as disSerialId,
+       t.BUSI_PROCESS_ID as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.paper_title as signPerson,
+       t.paper_title as counterSign,
+       t.paper_code as paperCode,
+       t.paper_title as mainOffice,
+       t.paper_title as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.REC_DATE as draftDate,
+       t.draft_dept as draftDept,
+       t.paper_title as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.paper_title as printPerson,
+       t.paper_title as proofPerson,
+       t.RECEIVED_ID as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       tt.task_name as taskName,
+       tt.TASK_HANDLER as draftIdea,
+       t.process_id as processId,
+       t.process_id as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.REC_DATE as signDate,
+       tt.CUR_NODE_ID  as numId,
+       t.private_leve as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.REC_TYPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks
+       from T_RECEIVED t,T_PROCESS_INSTANCE_REC tt 
+       where t.DF_STATE in (1,2)  and t.RECEIVED_ID=tt.BUSI_SERIAL_NO 
+       and tt.END_TIME is null and tt.BUSI_CODE ='RF' and tt.TASK_HANDLER  = :taskHandler 
+	   and t.URGENCY_LEVEL in('0','1','2','3')  and  tt.app_state !='1'
+	</sql-query>
+	
+	<sql-query name="workflow.param.doQueryUndisposeDispatchs">
+	   select tt.TASK_INSTANCE_ID as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       tt.CUR_NODE_ID as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       org.ORG_NAME as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       tt.TASK_HANDLER as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       tt.CREATE_TIME as curBeginTime,
+       tt.task_name as taskName,
+       tt.source_operator as draftIdea,
+       t.process_id as processId,
+       t.dispatch_id as handleTimelimit ,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks   
+       from T_DISPATCH t,T_PROCESS_INSTANCE_REC tt,SYS_ORG org
+       where t.DF_STATE in (1,2) and t.DISPATCH_ID =tt.BUSI_SERIAL_NO and tt.END_TIME is null and tt.TASK_HANDLER =:taskHandler
+       and t.DRAFT_DEPT=org.ORG_CODE   and  tt.app_state !='1'
+union ALL
+       select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.seal_id as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       org.ORG_NAME as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_person as draftIdea,
+       t.process_id as processId,
+       t.handle_timelimit as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks
+       from T_DISPATCH t,SYS_ORG org 
+       where t.DRAFT_DEPT=org.ORG_CODE and t.DF_STATE=0 and t.DRAFT_PERSON =:taskHandler
+	</sql-query>
+	
+	<sql-query name="workflow.param.doQueryDispatchsRec"> 
+	select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.seal_id as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       t.draft_dept as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       tt.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       t.handle_timelimit as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,       
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks,
+       tt.CUR_NODE_ID,
+       tt.TASK_INSTANCE_ID
+  from T_DISPATCH t ,T_PROCESS_INSTANCE_REC tt
+  where t.df_state in (:state) and t.DISPATCH_ID =tt.BUSI_SERIAL_NO 
+  and tt.end_time is null and tt.task_handler = :taskHandler
+ and tt.busi_code ='DF'  and  tt.app_state !='1'
+	</sql-query>
+	<!-- 已办发文 delete by zq 
+	 <sql-query name="workflow.param.doQueryDispatchById"> 
+	select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.seal_id as sealId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       t.draft_dept as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       t.handle_timelimit as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,       
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.REMARKS as remarks
+  from T_DISPATCH t where t.dispatch_id in (select distinct BUSI_SERIAL_NO from T_APPROVE_RECORD ta where ta.APP_STATE ='0' and ta.BUSI_CODE='DF' and ta.APP_PERSON=:appPerson)
+	</sql-query>
+	-->
+	
+	<!-- 已办发文  add by zq-->
+	 <sql-query name="workflow.param.doQueryDispatchById"> 
+	select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.seal_id as sealId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+
+       t.draft_dept as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       t.handle_timelimit as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,       
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks,t2.APP_TIME as draftDate
+  from T_DISPATCH t  left  join  T_APPROVE_RECORD t2 
+  on t.dispatch_id=t2.BUSI_SERIAL_NO 
+where t2.APP_STATE='0' and t2.APP_PERSON=:appPerson
+and not exists(select 1 from T_APPROVE_RECORD 
+where BUSI_SERIAL_NO=t2.BUSI_SERIAL_NO and APP_STATE='0' and APP_PERSON=:appPerson and APP_SERIAL_ID>t2.APP_SERIAL_ID)
+	</sql-query>
+	
+		<!-- 地市发文  add by zxh-->
+	 <sql-query name="workflow.param.doQueryDsDispatchById">
+	select  t1.dispatch_id as dispatchId,
+       t1.busi_process_id as busiProcessId,
+       t1.seal_id as sealId,
+       t1.DIS_SERIAL_ID as disSerialId,
+       t1.busi_code as busiCode,
+       t1.paper_title as paperTitle,
+       t1.sign_person as signPerson,
+       t1.counter_sign as counterSign,
+       t1.paper_code as paperCode,
+       t1.main_office as mainOffice,
+       t1.copy_office as copyOffice,
+       t1.subject_word as subjectWord,
+       t1.draft_person as draftPerson,
+       t1.draft_dept as draftDept,
+       t1.link_tel as linkTel,
+       t1.urgency_level as urgencyLevel,
+       t1.private_leve as privateLeve,
+       t1.print_person as printPerson,
+       t1.proof_person as proofPerson,
+       t1.print_num as printNum,
+       t1.df_state as dfState,
+       t1.cur_handler as curHandler,
+       t1.cur_department as curDepartment,
+       t1.cur_begin_time as curBeginTime,
+       t1.task_name as taskName,
+       t1.draft_idea as draftIdea,
+       t1.process_id as processId,
+       t1.handle_timelimit as handleTimelimit,
+       t1.public_way as publicWay,
+       t1.notpublic_cause as notpublicCause,
+       t1.SIGN_DATE as signDate,
+       t1.NUM_ID as numId,
+       t1.IS_ARCHIVED as isArchived,       
+       t1.DOCUMENT_ID as documentId,
+       t1.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t1.REMARKS as remarks,t1.APP_TIME as draftDate from (
+	select t.*,t2.APP_TIME 
+  from T_DISPATCH t  left  join  T_APPROVE_RECORD t2 
+  on t.dispatch_id=t2.BUSI_SERIAL_NO 
+where t2.APP_STATE='0' and t2.BUSI_CODE='DF' and t2.APP_PERSON=:appPerson
+and not exists(select 1 from T_APPROVE_RECORD 
+where BUSI_SERIAL_NO=t2.BUSI_SERIAL_NO and APP_STATE='0' and BUSI_CODE='DF' and APP_PERSON=:appPerson and APP_TIME>t2.APP_TIME)) t1,T_REGION_DISPATCH t3
+where t1.dispatch_id=t3.FOREIGNKEY_ID and t3.type='2'
+	</sql-query>
+	
+		 <sql-query name="workflow.param.doQueryDispatchByIdIos"> 
+	select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.seal_id as sealId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t2.IS_CLICK as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+
+       t.draft_dept as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       t.handle_timelimit as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,       
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks,t2.APP_TIME as draftDate
+  from T_DISPATCH t  left  join  T_APPROVE_RECORD t2 
+  on t.dispatch_id=t2.BUSI_SERIAL_NO 
+where t2.APP_STATE='0' and t2.BUSI_CODE=:busiCode and t2.APP_PERSON=:appPerson
+and not exists(select 1 from T_APPROVE_RECORD 
+where BUSI_SERIAL_NO=t2.BUSI_SERIAL_NO and APP_STATE='0'  and BUSI_CODE=:busiCode and APP_PERSON=:appPerson and APP_SERIAL_ID>t2.APP_SERIAL_ID)
+	</sql-query>
+	
+	
+	 <sql-query name="Dispatch.doQueryDishi"> 
+	 
+	 select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.seal_id as sealId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       t.draft_dept as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       t.handle_timelimit as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,       
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks
+  from T_DISPATCH t where t.dispatch_id in (:imId)
+	 
+     </sql-query>
+	<!-- 我的经办呈送时间改为处理时间 -->
+	<sql-query name="workflow.param.doQueryDispatchById007"> 
+	   	
+		<!-- 因私出境 -->
+		select t.OUTSIDE_APPLY_ID AS dispatchId,
+			t.APPLY_TITLE AS paperTitle,
+			t.BUSI_CODE AS busiCode,
+			t2.DO_TASK_NAME AS taskName,
+			t.APPLY_CREATETIME AS draftDate,
+			'' AS disSerialId,
+			'' AS urgencyLevel,
+			t.ORG_CODE AS draftDept,
+			t.APPLY_BEGINTIME AS curBeginTime,
+			'' as dfstate,
+		    t2.APP_TIME as signDate
+		    from t_outside_apply t  left  join  T_APPROVE_RECORD t2 
+		    on t.OUTSIDE_APPLY_ID=t2.BUSI_SERIAL_NO 
+			where t2.APP_STATE='0' and t2.APP_PERSON=:appPerson
+			and not exists(select 1 from T_APPROVE_RECORD 
+			where BUSI_SERIAL_NO=t2.BUSI_SERIAL_NO and APP_STATE='0' and APP_PERSON=:appPerson and APP_SERIAL_ID>t2.APP_SERIAL_ID)
+			
+		union all
+		
+		select t.dispatch_id AS dispatchId,
+			t.paper_title AS paperTitle,
+			t.busi_code AS busiCode,
+			t.task_name AS taskName,
+			t.draft_date AS draftDate,
+			t.DIS_SERIAL_ID AS disSerialId,
+			t.urgency_level AS urgencyLevel,
+			t.draft_dept AS draftDept,
+			t.CUR_BEGIN_TIME AS curBeginTime,
+			t.DF_STATE as dfstate,
+		    t2.APP_TIME as signDate
+		  from T_DISPATCH t  left  join  T_APPROVE_RECORD t2 
+		  on t.dispatch_id=t2.BUSI_SERIAL_NO 
+		where t2.APP_STATE='0' and t2.APP_PERSON=:appPerson
+		and not exists(select 1 from T_APPROVE_RECORD 
+		where BUSI_SERIAL_NO=t2.BUSI_SERIAL_NO and APP_STATE='0' and APP_PERSON=:appPerson and APP_SERIAL_ID>t2.APP_SERIAL_ID)
+		
+		union all
+		
+		select  t.received_id as receivedId,
+		       t.paper_title as paperTitle,
+		       t.busi_code as busiCode,
+		       t.task_name as taskName,
+		       t.draft_date as draftDate,
+		       t.rec_serial_id as recSerialId,
+		       t.urgency_level as urgencyLevel,
+		       t.draft_dept as draftDept,
+		       t.cur_begin_time as curBeginTime,
+		       t.df_state as dfState,
+			   t2.APP_TIME as signDate
+		  from T_RECEIVED t  left  join  T_APPROVE_RECORD t2 
+		  on t.RECEIVED_ID=t2.BUSI_SERIAL_NO 
+		where t2.APP_STATE='0' and t2.BUSI_CODE='RF' and t2.APP_PERSON=:appPerson
+		and not exists(select 1 from T_APPROVE_RECORD 
+		where BUSI_SERIAL_NO=t2.BUSI_SERIAL_NO and APP_STATE='0' and BUSI_CODE='RF' and APP_PERSON=:appPerson and APP_SERIAL_ID>t2.APP_SERIAL_ID)
+		union all
+		<!-- 请假 -->
+		select t.LEAVE_APPLY_ID AS dispatchId,
+			t.APPLY_TITLE AS paperTitle,
+			t.busi_code AS busiCode,
+			t.APPLY_STATE AS taskName,
+			t.APPLY_CREATETIME AS draftDate,
+			'' AS disSerialId,
+			'' AS urgencyLevel,
+			t.ORG_CODE AS draftDept,
+			t.APPLY_CREATETIME AS curBeginTime,
+			t.APPLY_STATE as dfstate,
+		    t2.APP_TIME as signDate
+		  from T_LEAVE_APPLY t  left  join  T_APPROVE_RECORD t2 
+		  on t.LEAVE_APPLY_ID=t2.BUSI_SERIAL_NO 
+		where t2.APP_STATE='0' and t2.APP_PERSON=:appPerson
+		AND t2.busi_code='QJ' and t.BUSI_CODE='QJ'
+		and not exists(select 1 from T_APPROVE_RECORD 
+		where BUSI_SERIAL_NO=t2.BUSI_SERIAL_NO and APP_STATE='0' and APP_PERSON=:appPerson and t2.BUSI_CODE='QJ' and APP_SERIAL_ID>t2.APP_SERIAL_ID)
+      union all
+      <!-- 请假 外出-->
+      select t.OUT_APPLY_ID AS dispatchId,
+			t.APPLY_TITLE AS paperTitle,
+			t.busi_code AS busiCode,
+			t.APPLY_STATE AS taskName,
+			t.APPLY_CREATETIME AS draftDate,
+			'' AS disSerialId,
+			'' AS urgencyLevel,
+			t.ORG_CODE AS draftDept,
+			t.APPLY_CREATETIME AS curBeginTime,
+			t.APPLY_STATE as dfstate,
+		    t2.APP_TIME as signDate
+		  from T_OUT_APPLY t  left  join  T_APPROVE_RECORD t2 
+		  on t.OUT_APPLY_ID=t2.BUSI_SERIAL_NO 
+		where t2.APP_STATE='0' and t2.APP_PERSON=:appPerson
+		AND t2.busi_code='OUT'
+		and not exists(select 1 from T_APPROVE_RECORD 
+		where BUSI_SERIAL_NO=t2.BUSI_SERIAL_NO and APP_STATE='0' and APP_PERSON=:appPerson and t2.BUSI_CODE='OUT' and APP_SERIAL_ID>t2.APP_SERIAL_ID)
+			union all
+		<!-- 会议室材料收集 -->
+		SELECT t.ACC_COLLECT_ID AS dispatchId,
+			t.MEETING_TITLE AS paperTitle,
+			'MBC' AS busiCode,
+			t.APPLY_STATE AS taskName,
+			t.REGIST_TIME AS draftDate,
+			'' AS disSerialId,
+			'' AS urgencyLevel,
+			t.BOOK_ORG AS draftDept,
+			t.MEETING_BEGINTIME AS curBeginTime,
+			t.APPLY_STATE AS dfstate,
+		    t2.APP_TIME AS signDate
+		  FROM t_meetingroom_acc_collect t  LEFT  JOIN  T_APPROVE_RECORD t2 
+		  ON t.ACC_COLLECT_ID=t2.BUSI_SERIAL_NO 
+		WHERE t2.APP_STATE='0' AND t2.APP_PERSON=:appPerson
+		AND t2.busi_code='MBC' 
+		AND NOT EXISTS(SELECT 1 FROM T_APPROVE_RECORD 
+		WHERE BUSI_SERIAL_NO=t2.BUSI_SERIAL_NO AND APP_STATE='0' AND APP_PERSON=:appPerson AND t2.BUSI_CODE='MBC' AND APP_SERIAL_ID>t2.APP_SERIAL_ID)
+      
+		
+	</sql-query>
+	
+	
+	<!--  <sql-query name="workflow.param.doQueryDispatchById007"> 
+	SELECT t1.* FROM
+(
+SELECT
+	t2.dispatch_id AS dispatchId,
+	t2.paper_title AS paperTitle,
+	t2.busi_code AS busiCode,
+	t2.task_name AS taskName,
+	t2.draft_date AS draftDate,
+	t2.DIS_SERIAL_ID AS disSerialId,
+	t2.urgency_level AS urgencyLevel,
+	t2.draft_dept AS draftDept,
+	t2.CUR_BEGIN_TIME AS curBeginTime,
+	t2.DF_STATE as dfstate
+FROM
+	T_DISPATCH t2
+WHERE
+	t2.dispatch_id IN (
+		SELECT DISTINCT
+			BUSI_SERIAL_NO
+		FROM
+			T_APPROVE_RECORD ta
+		WHERE
+			ta.APP_STATE = '0'
+		AND ta.BUSI_CODE = 'DF'
+		AND ta.APP_PERSON = :appPerson
+	)
+UNION
+	SELECT
+		t3.received_id AS receivedId,
+		t3.paper_title AS paperTitle,
+		t3.busi_code AS busiCode,
+		t3.task_name AS taskName,
+		t3.draft_date AS draftDate,
+		t3.rec_serial_id AS disSerialId,
+		t3.urgency_level AS urgencyLevel,  
+		t3.draft_dept AS draftDept,
+		t3.CUR_BEGIN_TIME AS curBeginTime,
+		t3.DF_STATE as dfstate
+	FROM
+		T_RECEIVED t3
+	WHERE
+		t3.received_id IN (
+			SELECT DISTINCT
+				BUSI_SERIAL_NO
+			FROM
+				T_APPROVE_RECORD ta
+			WHERE
+				ta.APP_STATE = '0'
+			AND ta.BUSI_CODE = 'RF'
+			AND ta.APP_PERSON = :appPerson
+		)
+) t1 
+	</sql-query>
+	-->
+  <sql-query name="fulltext.dispatch.query"> 
+	select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.seal_id as sealId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       t.draft_dept as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       t.handle_timelimit as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,       
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks
+  from T_DISPATCH t where CONTAINS(copy_office,:keyword )
+  or CONTAINS(cur_department,:keyword )
+  or CONTAINS(draft_dept,:keyword )
+  or CONTAINS(draft_person,:keyword )
+  or CONTAINS(main_office,:keyword )
+  or CONTAINS(paper_title,:keyword )
+  or CONTAINS(public_way,:keyword )
+  or CONTAINS(subject_word,:keyword )
+	</sql-query>
+	
+<!-- 发文精确查询 可展现 -->
+<sql-query name="Dispatch.doQueryDisListShowAll"> 
+select     DIS_SERIAL_ID disSerialId,
+		   DF_STATE dfState,
+		   URGENCY_LEVEL urgencyLevel,
+		   DISPATCH_ID dispatchId ,
+		   PAPER_CODE paperCode,
+		   PAPER_TITLE paperTitle,
+		   CUR_BEGIN_TIME curBeginTime,
+		   TASK_NAME taskName,
+		   CUR_HANDLER curHandler,
+		   DRAFT_DATE draftDate,
+		   PROCESS_ID processId,
+		   MAIN_OFFICE mainOffice,
+		   DRAFT_PERSON draftPerson,
+		   DRAFT_DEPT as draftDept,
+		   SEAL_ID sealId,
+		   SIGN_PERSON signPerson,
+		   PUBLIC_WAY publicWay,
+		   COPY_OFFICE copyOffice,
+		   SIGN_DATE signDate,       
+	       DOCUMENT_ID as documentId,
+	       DISPATCH_SCOPE as dispatchScope,
+	       RELATION_ID as relationId,
+           RELATION_TYPE as relationType,
+           RELATION_NAME as relationName,
+           NUM_ID as numId,
+	       SUBJECT_WORD as subjectWord,
+	       BUSI_CODE as busiCode 
+from T_DISPATCH dis 
+<!-- where dis.DISPATCH_ID in (
+	select process.BUSI_SERIAL_NO from T_PROCESS_INSTANCE_REC  process 
+	where process.BUSI_CODE=:busiCode and dis.DISPATCH_ID = process.BUSI_SERIAL_NO    
+     and  process.app_state !='1'
+	 and
+	( process.TASK_HANDLER in (
+	                  select OPER_ID from SYS_OPERATOR 
+	                  where OPER_ID != 'okko'
+	                  )  
+	 )
+)   -->
+where DF_STATE!='0' and busi_code=:busiCode
+</sql-query>
+	
+<!-- 发文精确查询 可展现 -->
+<sql-query name="Dispatch.doQueryDisListShow"> 
+select     DIS_SERIAL_ID disSerialId,
+		   DF_STATE dfState,
+		   URGENCY_LEVEL urgencyLevel,
+		   DISPATCH_ID dispatchId ,
+		   PAPER_CODE paperCode,
+		   PAPER_TITLE paperTitle,
+		   CUR_BEGIN_TIME curBeginTime,
+		   TASK_NAME taskName,
+		   CUR_HANDLER curHandler,
+		   DRAFT_DATE draftDate,
+		   PROCESS_ID processId,
+		   MAIN_OFFICE mainOffice,
+		   DRAFT_PERSON draftPerson,
+		   DRAFT_DEPT draftDept,
+		   SEAL_ID sealId,
+		   SIGN_PERSON signPerson,
+		   PUBLIC_WAY publicWay,
+		   COPY_OFFICE copyOffice,
+		   SIGN_DATE signDate,       
+	       DOCUMENT_ID as documentId,
+	       DISPATCH_SCOPE as dispatchScope,
+	       RELATION_ID as relationId,
+           RELATION_TYPE as relationType,
+           RELATION_NAME as relationName,
+           NUM_ID as numId,
+	       SUBJECT_WORD as subjectWord,
+	       BUSI_CODE as busiCode 
+from T_DISPATCH dis 
+<!-- where dis.DISPATCH_ID in (
+	select process.BUSI_SERIAL_NO  from T_PROCESS_INSTANCE_REC  process 
+	where process.BUSI_CODE=:busiCode and dis.DISPATCH_ID = process.BUSI_SERIAL_NO    
+     and  process.app_state !='1'
+	 and
+	( process.TASK_HANDLER in (
+	                  select OPER_ID from SYS_OPERATOR 
+	                  where OPER_ID != 'okko'
+	                  and ORG_CODE in (:orgCode)
+	                  )  
+	 )
+)   -->
+where  exists (
+	select 1 from T_PROCESS_INSTANCE_REC process 
+	where process.BUSI_CODE=:busiCode and process.BUSI_SERIAL_NO = dis.DISPATCH_ID  and  
+	  process.TASK_HANDLER in (select OPER_ID from SYS_OPERATOR where ORG_CODE in(:orgCode))
+	  and  process.app_state !='1'
+)   
+</sql-query>
+
+<!-- 发文精确查询 可展现 -->
+<sql-query name="Dispatch.doQueryKeyuanDisListShow"> 
+select     DIS_SERIAL_ID disSerialId,
+		   DF_STATE dfState,
+		   URGENCY_LEVEL urgencyLevel,
+		   DISPATCH_ID dispatchId ,
+		   PAPER_CODE paperCode,
+		   PAPER_TITLE paperTitle,
+		   CUR_BEGIN_TIME curBeginTime,
+		   TASK_NAME taskName,
+		   CUR_HANDLER curHandler,
+		   DRAFT_DATE draftDate,
+		   PROCESS_ID processId,
+		   MAIN_OFFICE mainOffice,
+		   DRAFT_PERSON draftPerson,
+		   DRAFT_DEPT draftDept,
+		   SEAL_ID sealId,
+		   SIGN_PERSON signPerson,
+		   PUBLIC_WAY publicWay,
+		   COPY_OFFICE copyOffice,
+		   SIGN_DATE signDate,       
+	       DOCUMENT_ID as documentId,
+	       DISPATCH_SCOPE as dispatchScope,
+	       RELATION_ID as relationId,
+           RELATION_TYPE as relationType,
+           RELATION_NAME as relationName,
+           NUM_ID as numId,
+	       SUBJECT_WORD as subjectWord,
+	       BUSI_CODE as busiCode 
+from T_DISPATCH dis 
+<!-- where dis.DISPATCH_ID in (
+	select process.BUSI_SERIAL_NO  from T_PROCESS_INSTANCE_REC  process 
+	where process.BUSI_CODE=:busiCode and dis.DISPATCH_ID = process.BUSI_SERIAL_NO    
+	and process.TASK_HANDLER = :operId
+	and  process.app_state !='1'
+)   -->
+where  exists (
+	select 1 from T_PROCESS_INSTANCE_REC process 
+	where process.BUSI_CODE=:busiCode and process.BUSI_SERIAL_NO = dis.DISPATCH_ID  and  
+	process.TASK_HANDLER = :operId
+	and  process.app_state !='1'
+) 
+</sql-query>
+
+<!-- 发文精确查询 可展现 综合处-->
+<sql-query name="Dispatch.doQueryDisListShowZHC"> 
+select     DIS_SERIAL_ID disSerialId,
+		   DF_STATE dfState,
+		   URGENCY_LEVEL urgencyLevel,
+		   DISPATCH_ID dispatchId ,
+		   PAPER_CODE paperCode,
+		   PAPER_TITLE paperTitle,
+		   CUR_BEGIN_TIME curBeginTime,
+		   TASK_NAME taskName,
+		   CUR_HANDLER curHandler,
+		   DRAFT_DATE draftDate,
+		   PROCESS_ID processId,
+		   MAIN_OFFICE mainOffice,
+		   DRAFT_PERSON draftPerson,
+		   DRAFT_DEPT draftDept,
+		   SEAL_ID sealId,
+		   SIGN_PERSON signPerson,
+		   PUBLIC_WAY publicWay,
+		   COPY_OFFICE copyOffice,
+		   SIGN_DATE signDate,       
+	       DOCUMENT_ID as documentId,
+	       DISPATCH_SCOPE as dispatchScope,
+	       RELATION_ID as relationId,
+           RELATION_TYPE as relationType,
+	       SUBJECT_WORD as subjectWord,
+	       BUSI_CODE as busiCode 
+from T_DISPATCH dis where exists (
+	select 1 from T_PROCESS_INSTANCE_REC  process 
+    where process.BUSI_CODE=:busiCode and dis.DISPATCH_ID = process.BUSI_SERIAL_NO 
+    and  process.app_state !='1'   
+	and process.TASK_HANDLER not in (
+	     select OPER_ID from SYS_OPERATOR  where ORG_CODE in ('GHCW','RS','JGDB','LTX','JJJC','JGFWZX','WHTBGS','WHT'))
+	)  
+</sql-query>
+
+<!-- 发文精确查询 可展现 根据盖章类型查找-->
+<sql-query name="Dispatch.doQueryDisListShowBySealId"> 
+select     DIS_SERIAL_ID disSerialId,
+		   DF_STATE dfState,
+		   URGENCY_LEVEL urgencyLevel,
+		   DISPATCH_ID dispatchId ,
+		   PAPER_CODE paperCode,
+		   PAPER_TITLE paperTitle,
+		   CUR_BEGIN_TIME curBeginTime,
+		   TASK_NAME taskName,
+		   CUR_HANDLER curHandler,
+		   DRAFT_DATE draftDate,
+		   PROCESS_ID processId,
+		   MAIN_OFFICE mainOffice,
+		   DRAFT_PERSON draftPerson,
+		   DRAFT_DEPT draftDept,
+		   SEAL_ID sealId,
+		   SIGN_PERSON signPerson,
+		   PUBLIC_WAY publicWay,
+		   COPY_OFFICE copyOffice,
+		   SIGN_DATE signDate,       
+	       DOCUMENT_ID as documentId,
+	       DISPATCH_SCOPE as dispatchScope,
+	       RELATION_ID as relationId,
+           RELATION_TYPE as relationType,
+           RELATION_NAME as relationName,
+	       SUBJECT_WORD as subjectWord,
+	       BUSI_CODE as busiCode 
+from T_DISPATCH dis where SEAL_ID = :sealId and exists (
+	select * from T_PROCESS_INSTANCE_REC  process 
+	where process.BUSI_CODE='DF' and dis.DISPATCH_ID = process.BUSI_SERIAL_NO  and 
+	(   
+	  process.TASK_HANDLER in (select OPER_ID from SYS_OPERATOR where ORG_CODE in (:orgCode) and OPER_ID != 'okko')
+    or 'WHTBGS' in (:orgCode)
+    )
+     and  process.app_state !='1'
+)  
+</sql-query>
+
+<!-- 发文精确查询 可办理 -->
+<sql-query name="Dispatch.doQueryDisListShow1"> 
+select     DIS_SERIAL_ID disSerialId,
+		   DF_STATE dfState,
+		   URGENCY_LEVEL urgencyLevel,
+		   DISPATCH_ID dispatchId ,
+		   PAPER_CODE paperCode,
+		   PAPER_TITLE paperTitle,
+		   CUR_BEGIN_TIME curBeginTime,
+		   TASK_NAME taskName,
+		   CUR_HANDLER curHandler,
+		   DRAFT_DATE draftDate,
+		   PROCESS_ID processId,
+		   MAIN_OFFICE mainOffice,
+		   DRAFT_PERSON draftPerson,
+		   DRAFT_DEPT draftDept,
+		   SEAL_ID sealId,
+		   SIGN_PERSON signPerson,
+		   PUBLIC_WAY publicWay,
+		   COPY_OFFICE copyOffice,
+		   SIGN_DATE signDate,       
+	       DOCUMENT_ID as documentId,
+	       DISPATCH_SCOPE as dispatchScope,
+	       RELATION_ID as relationId,
+           RELATION_TYPE as relationType,
+           RELATION_NAME as relationName,
+	       SUBJECT_WORD as subjectWord,
+	       BUSI_CODE as busiCode 
+from T_DISPATCH dis where exists (
+	select 1 from T_PROCESS_INSTANCE_REC  process 
+	where process.BUSI_CODE='DF' and dis.DISPATCH_ID = process.BUSI_SERIAL_NO  and 
+	(   
+	  process.TASK_HANDLER in (select OPER_ID from SYS_OPERATOR where ORG_CODE in (:orgCode) and OPER_ID != 'okko')
+    or 'WHTBGS' in (:orgCode)
+    )
+    and  process.app_state !='1'
+	 and TASK_HANDLER = :operId and END_TIME is null 
+)  
+</sql-query>
+
+
+<!-- 发文精确查询 可办理 综合处-->
+<sql-query name="Dispatch.doQueryDisListShowZHC1"> 
+select     DIS_SERIAL_ID disSerialId,
+		   DF_STATE dfState,
+		   URGENCY_LEVEL urgencyLevel,
+		   DISPATCH_ID dispatchId ,
+		   PAPER_CODE paperCode,
+		   PAPER_TITLE paperTitle,
+		   CUR_BEGIN_TIME curBeginTime,
+		   TASK_NAME taskName,
+		   CUR_HANDLER curHandler,
+		   DRAFT_DATE draftDate,
+		   PROCESS_ID processId,
+		   MAIN_OFFICE mainOffice,
+		   DRAFT_PERSON draftPerson,
+		   DRAFT_DEPT draftDept,
+		   SEAL_ID sealId,
+		   SIGN_PERSON signPerson,
+		   PUBLIC_WAY publicWay,
+		   COPY_OFFICE copyOffice,
+		   SIGN_DATE signDate,       
+	       DOCUMENT_ID as documentId,
+	       DISPATCH_SCOPE as dispatchScope,
+	       RELATION_ID as relationId,
+           RELATION_TYPE as relationType,
+           RELATION_NAME as relationName,
+	       SUBJECT_WORD as subjectWord,
+	       BUSI_CODE as busiCode 
+from T_DISPATCH dis where exists (
+	select 1 from T_PROCESS_INSTANCE_REC  process 
+	where process.BUSI_CODE='DF' and dis.DISPATCH_ID = process.BUSI_SERIAL_NO  and 
+	(   
+	  process.TASK_HANDLER not in (select OPER_ID from SYS_OPERATOR where ORG_CODE in ('GHCW','RS','JGDB','LTX','JJJC','JGFWZX','WHTBGS') and OPER_ID != 'okko')
+    )
+     and  process.app_state !='1'
+	 and TASK_HANDLER = :operId and END_TIME is null 
+)  
+</sql-query>
+	
+<!-- 发文高级查询 -->
+<sql-query name="Dispatch.doQueryDispatchListsk"> 
+select     DIS_SERIAL_ID disSerialId,
+		   DF_STATE dfState,
+		   URGENCY_LEVEL urgencyLevel,
+		   DISPATCH_ID dispatchId ,
+		   PAPER_CODE paperCode,
+		   PAPER_TITLE paperTitle,
+		   CUR_BEGIN_TIME curBeginTime,
+		   TASK_NAME taskName,
+		   CUR_HANDLER curHandler,
+		   DRAFT_DATE draftDate,
+		   PROCESS_ID processId,
+	       BUSI_CODE as busiCode    
+from T_DISPATCH dis where (exists (
+	select * from T_PROCESS_INSTANCE_REC  process 
+	where process.BUSI_CODE=:busiCode and dis.DISPATCH_ID = process.BUSI_SERIAL_NO  and 
+	
+	(   
+	
+	  (process.TASK_HANDLER in (select OPER_ID from SYS_OPERATOR where ORG_CODE = (select ORG_CODE from SYS_OPERATOR where OPER_ID = :operId) and OPER_ID != 'okko')  or 'WHTBGS' = (select ORG_CODE from SYS_OPERATOR where OPER_ID = :operId)))
+)   ) and
+	 ((PAPER_TITLE like :q_keyWords) or (DIS_SERIAL_ID like :q_keyWords) or (PAPER_CODE like :q_keyWords) 
+	       or (TASK_NAME like :q_keyWords) or (DISPATCH_SCOPE like :q_keyWords) or (SUBJECT_WORD like :q_keyWords))
+	  and  process.app_state !='1'
+</sql-query>
+
+<sql-query name="Dispatch.doQueryDispatchListsk1"> 
+	select DIS_SERIAL_ID disSerialId,
+		   DF_STATE dfState,
+		   URGENCY_LEVEL urgencyLevel,
+		   DISPATCH_ID dispatchId ,
+		   PAPER_CODE paperCode,
+		   PAPER_TITLE paperTitle,
+		   CUR_BEGIN_TIME curBeginTime,
+		   TASK_NAME taskName,
+		   CUR_HANDLER curHandler,
+		   DRAFT_DATE draftDate,
+		   PROCESS_ID processId,
+	       BUSI_CODE as busiCode    
+from T_DISPATCH dis where (exists (
+	select * from  T_PROCESS_INSTANCE_REC  process 
+	where process.BUSI_CODE=:busiCode and dis.DISPATCH_ID = process.BUSI_SERIAL_NO  and 
+	
+	(  
+	
+	  (process.TASK_HANDLER in (select OPER_ID from SYS_OPERATOR where ORG_CODE = (select ORG_CODE from SYS_OPERATOR where OPER_ID = :operId) and OPER_ID != 'okko')  or 'WHTBGS' = (select ORG_CODE from SYS_OPERATOR where OPER_ID = :operId)))
+	 and TASK_HANDLER = :operId and END_TIME is null 
+)   ) and 
+ ((PAPER_TITLE like :q_keyWords) or (DIS_SERIAL_ID like :q_keyWords) or (PAPER_CODE like :q_keyWords) 
+	       or (TASK_NAME like :q_keyWords) or (DISPATCH_SCOPE like :q_keyWords) or (SUBJECT_WORD like :q_keyWords))
+     and  process.app_state !='1'
+</sql-query>
+
+
+<!-- 发文登记查询 -->
+<sql-query  name="Dispatch.doQueryDisRegistList"> 
+SELECT t.dispatch_id AS dispatchId,
+       DATE_FORMAT(SIGN_DATE,'%Y')  counterSign,
+       t.busi_process_id AS busiProcessId,
+       t.seal_id AS sealId,
+       t.DIS_SERIAL_ID AS disSerialId,
+       t.busi_code AS busiCode,
+       t.paper_title AS paperTitle,
+       t.sign_person AS signPerson,
+       t.paper_code AS paperCode,
+       SUBSTRING(PAPER_CODE,1,LOCATE('[',PAPER_CODE)-1) subjectWord,
+       CAST(SUBSTRING(PAPER_CODE,LOCATE(']',PAPER_CODE)+1,LENGTH(PAPER_CODE)-LOCATE(']',PAPER_CODE)-1) AS SIGNED) handleTimelimit,
+       t.main_office AS mainOffice,
+       t.copy_office AS copyOffice,
+       t.draft_person AS draftPerson,
+       t.draft_date AS draftDate,
+       t.draft_dept AS draftDept,
+       t.link_tel AS linkTel,
+       t.urgency_level AS urgencyLevel,
+       t.private_leve AS privateLeve,
+       t.print_person AS printPerson,
+       t.proof_person AS proofPerson,
+       t.print_num AS printNum,
+       t.df_state AS dfState,
+       t.cur_handler AS curHandler,
+       t.cur_department AS curDepartment,
+       t.cur_begin_time AS curBeginTime,
+       t.task_name AS taskName,
+       t.draft_idea AS draftIdea,
+       t.process_id AS processId,
+       t.public_way AS publicWay,
+       t.notpublic_cause AS notpublicCause,
+       t.SIGN_DATE AS signDate,
+       t.NUM_ID AS numId,
+       t.IS_ARCHIVED AS isArchived,       
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks,
+        SECRET_ROOM secretRoom, 
+        DESTRUCTION_USER destructionUser, 
+        CUSTODIAN_USER custodianUser
+FROM  T_DISPATCH t   LEFT OUTER JOIN  T_DOCUMENT_REGISTRATION reg ON t.DISPATCH_ID = reg.DOCUMENT_ID 
+WHERE PAPER_CODE LIKE'%]%' 
+union all
+    select t.dispatch_id as dispatchId,
+	   DATEPART (year, SIGN_DATE) counterSign,
+       t.busi_process_id as busiProcessId,
+       t.seal_id as sealId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.paper_code as paperCode,
+	   t.subject_word as subjectWord,
+       t.HANDLE_TIMELIMIT as handleTimelimit,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       t.draft_dept as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,       
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks,
+        SECRET_ROOM secretRoom, 
+        DESTRUCTION_USER destructionUser, 
+        CUSTODIAN_USER custodianUser
+from  T_DISPATCH t   LEFT OUTER JOIN  T_DOCUMENT_REGISTRATION reg on t.DISPATCH_ID = reg.DOCUMENT_ID 
+where PAPER_CODE not like'%]%' 
+</sql-query>
+
+	<!-- 发文收藏  add by zq-->
+	 <sql-query name="workflow.param.doQueryDispatchStore"> 
+	select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.seal_id as sealId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.sign_person as signPerson,
+       t.counter_sign as counterSign,
+       t.paper_code as paperCode,
+       t.main_office as mainOffice,
+       t.copy_office as copyOffice,
+       t.subject_word as subjectWord,
+       t.draft_person as draftPerson,
+       tt.STORE_TIME as draftDate,
+       t.draft_dept as draftDept,
+       t.link_tel as linkTel,
+       t.urgency_level as urgencyLevel,
+       t.private_leve as privateLeve,
+       t.print_person as printPerson,
+       t.proof_person as proofPerson,
+       t.print_num as printNum,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_department as curDepartment,
+       t.cur_begin_time as curBeginTime,
+       t.task_name as taskName,
+       t.draft_idea as draftIdea,
+       t.process_id as processId,
+       t.handle_timelimit as handleTimelimit,
+       t.public_way as publicWay,
+       t.notpublic_cause as notpublicCause,
+       t.SIGN_DATE as signDate,
+       t.NUM_ID as numId,
+       t.IS_ARCHIVED as isArchived,       
+       t.DOCUMENT_ID as documentId,
+       t.DISPATCH_SCOPE as dispatchScope,
+       t.RELATION_ID as relationId,
+       t.RELATION_TYPE as relationType,
+       t.RELATION_NAME as relationName,
+       t.REMARKS as remarks
+       from T_DISPATCH t , T_DOCUMENT_STORE tt 
+       where  t.dispatch_id=tt.STORE_REC_ID
+ and tt.STORE_PERSON=:appPerson
+ and tt.STROE_FLAG=0 
+ </sql-query>
+
+ <sql-query name="workflow.param.doQueryDispatchRec"> 
+	select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       t.draft_dept as draftDept,
+       t.urgency_level as urgencyLevel,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_begin_time as curBeginTime,
+       tt.task_name as taskName,
+       t.process_id as processId,
+       tt.task_Instance_Id as taskInstanceId,
+       tt.cur_Node_Id as curNodeId,
+       tt.create_time as createTime
+  from T_DISPATCH t,t_process_instance_rec tt 
+  where t.df_State in (:state)  and t.dispatch_Id=tt.busi_Serial_No 
+	and tt.end_Time is null and tt.task_Handler = :taskHandler 
+	and tt.busi_Code ='DF' 
+  union
+  (select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       t.draft_dept as draftDept,
+       t.urgency_level as urgencyLevel,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_begin_time as curBeginTime,
+       '拟稿' as taskName,
+       t.process_id as processId,
+       null as taskInstanceId,
+       null as curNodeId,
+       t.draft_date as createTime
+  from t_dispatch t
+  where t.df_State ='0' 
+  and t.draft_Person = :taskHandler 
+  and t.busi_Code ='DF' 
+  ) 
+  order by curBeginTime desc 	
+ </sql-query> 
+ 
+ <sql-query name="workflow.param.doQueryDispatchRecSearch"> 
+	select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       t.draft_dept as draftDept,
+       t.urgency_level as urgencyLevel,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_begin_time as curBeginTime,
+       tt.task_name as taskName,
+       t.process_id as processId,
+       tt.task_Instance_Id as taskInstanceId,
+       tt.cur_Node_Id as curNodeId,
+       tt.create_time as createTime
+  from T_DISPATCH t,t_process_instance_rec tt 
+  where t.df_State in (:state)  and t.dispatch_Id=tt.busi_Serial_No 
+	and tt.end_Time is null and tt.task_Handler = :taskHandler 
+	and tt.busi_Code ='DF' 
+	and t.paper_title like :paperTitle
+  union
+  (select t.dispatch_id as dispatchId,
+       t.busi_process_id as busiProcessId,
+       t.DIS_SERIAL_ID as disSerialId,
+       t.busi_code as busiCode,
+       t.paper_title as paperTitle,
+       t.draft_person as draftPerson,
+       t.draft_date as draftDate,
+       t.draft_dept as draftDept,
+       t.urgency_level as urgencyLevel,
+       t.df_state as dfState,
+       t.cur_handler as curHandler,
+       t.cur_begin_time as curBeginTime,
+       '拟稿' as taskName,
+       t.process_id as processId,
+       null as taskInstanceId,
+       null as curNodeId,
+       t.draft_date as createTime
+  from t_dispatch t
+  where t.df_State ='0' 
+  and t.draft_Person = :taskHandler 
+  and t.busi_Code ='DF' 
+  and t.paper_title like :paperTitle
+  ) 
+  order by curBeginTime desc 	
+ </sql-query> 
+</hibernate-mapping>

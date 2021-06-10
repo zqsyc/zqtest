@@ -1,0 +1,58 @@
+√（1）关联公文，处理表，附件刷新功能
+√（5）添加附件、关联公文后，可自动刷新预览附件功能
+
+
+
+√（3）待办发文加入，按照时间排序功能，批量办结、批量送归档文件功能
+
+（4）收发文归档列表，增加按照时间顺序查询功能
+（6）收文归档加入归档日志，并办结收文流程、修改收文状态为办结状态
+（7）发文流程，点击归档，则结束所有流程
+--（2）收文自动归档功能、
+
+refresh=1
+
+$("#yjbt").attr("checked",true);
+$("#bjbt").attr("checked",false);
+$("#gdbt").attr("checked",false);
+
+	if (isReadOnly.equals("1")){
+							param.getQueryConditions().put("taskName", "阅知");
+						}else if (isReadOnly.equals("issue")){ // 签发
+							state = new String[]{"1022","1004","1012"};
+						}else if (isReadOnly.equals("sign")) { // 会签
+							state = new String[]{"1014"};
+							//param.getQueryConditions().put("sealIds", "1014");
+						}else if (isReadOnly.equals("read")) { // 阅知
+							state = new String[]{"1028"};
+							//param.getQueryConditions().put("sealIds", "1028");
+						}
+$("#yjbt").attr("checked",false);
+$("#bjbt").attr("checked",true);
+$("#gdbt").attr("checked",true);
+ id="yjbt" 
+ id="bjbt"
+ id="gdbt"
+ check1()
+ check2()
+			
+doBacklogList
+param.set_orderby("curBeginTime ");// 实际为已办人最新的处理时间，用draftDate代替
+param.set_desc("1");// 降序
+
+doBacklogListByCurBeginTime
+
+  $(obj).attr("checked",false);
+oBacklogListorderByFieldName.do?orderParam=orderByDisSerialId
+
+
+document.formList.action = "<%=contextPath%>/oa/dispatchAction_doBacklogList.do";
+    document.getElementsByName('param._pageno')[0].value = 1;
+    document.getElementsByName('param._se_sealId')[0].value = codes;
+    $("#formList").submit();
+	
+oBacklogListorderByFieldName.do?orderParam=orderByUrgencyLevel
+
+         <button type="button"  onClick="submitSearch(0);">按时间逆序查询</button>
+		                	<button  onClick="submitSearch(1);">按时间顺序查询</button> 
+							<button  onClick="submitSearch(2);">按紧急程度查询</button> 
